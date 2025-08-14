@@ -51,58 +51,5 @@ import { io } from "socket.io-client";
 const socket = io("https://your-app.up.railway.app");
 ```
 
-## Minimal React client snippet
-
-```js
-import { useEffect, useState } from "react";
-import { io } from "socket.io-client";
-
-const socket = io("http://localhost:3000"); // replace with Railway URL when deployed
-
-export default function MiniChat() {
-  const [me, setMe] = useState("");
-  const [online, setOnline] = useState([]);
-  const [to, setTo] = useState("");
-  const [msg, setMsg] = useState("");
-  const [inbox, setInbox] = useState([]);
-
-  useEffect(() => {
-    socket.on("onlineUsers", setOnline);
-    socket.on("receiveMessage", (data) => setInbox((x) => [...x, data]));
-    return () => {
-      socket.off("onlineUsers");
-      socket.off("receiveMessage");
-    };
-  }, []);
-
-  const join = () => {
-    if (me) socket.emit("join", me);
-  };
-
-  const sendPM = () => {
-    socket.emit("privateMessage", { to, message: msg });
-    setMsg("");
-  };
-
-  return (
-    <div>
-      <input placeholder="username" value={me} onChange={e=>setMe(e.target.value)} />
-      <button onClick={join}>Join</button>
-
-      <h4>Online</h4>
-      <ul>{online.map(u => <li key={u}>{u}</li>)}</ul>
-
-      <h4>Chat</h4>
-      <input placeholder="to" value={to} onChange={e=>setTo(e.target.value)} />
-      <input placeholder="message" value={msg} onChange={e=>setMsg(e.target.value)} />
-      <button onClick={sendPM}>Send</button>
-
-      <pre>{JSON.stringify(inbox, null, 2)}</pre>
-    </div>
-  );
-}
-```
-
----
 
 Happy hacking!
